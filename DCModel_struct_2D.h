@@ -2,8 +2,6 @@
 #define DCMODELSTRUCT2D_HH
 
 #include "DCModel_struct.h"
-#include <tbb\tbb.h>
-using namespace tbb;
 
 ////// Enum Flags /////////////////////////////////////////
 
