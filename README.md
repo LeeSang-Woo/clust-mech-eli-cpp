@@ -14,11 +14,15 @@
   
 ![vs01](https://user-images.githubusercontent.com/46122090/156304341-9d2112b5-8999-45af-8f90-1c3d2d2f633d.png)
 
-5. Build the solution (Menu bar> Build> Build Solution).
+5. Change Solution Configrations to "Release".
+
+![vs03](https://user-images.githubusercontent.com/46122090/156312753-5fcfd191-5506-4ba1-a9be-479d00abb594.png)
+
+6. Build the solution (Menu bar> Build> Build Solution).
 
 ![vs02](https://user-images.githubusercontent.com/46122090/156305191-765645de-e7c5-45a9-9c1a-16a47198c74f.png)
 
-6. Executive file "clust-mech-eli.exe" will be built into "downloaded folder/x64/Release/".
+7. Executive file "clust-mech-eli.exe" will be built into "downloaded folder/x64/Release/".
 
 ### Execute simulation (Windows)
 - For the simulation, the executive file "clust-mech-eli.exe" needs two files describing the initial condition ("initial2D_RD05_in1000_c_L####G####.csv" and "initial2D_RD05_in1000_p_L####G####.csv") and three files describing the simulation conditions ("DCModel_container_info.txt", "DCModel_param_abnormal.txt", and "DCModel_param_basic.txt").
