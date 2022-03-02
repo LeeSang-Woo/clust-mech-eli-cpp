@@ -610,6 +610,7 @@ public:
 
 	virtual int finishContainer(int flag=0) {
 
+		
 		if ((abnormal_con_flag & AC::FINISH_PARAM) == 0) {
 			if (abnormal_cells_size > 10000) return 1;
 			if (abnormal_cells_size > abnormal_cells_size_flag*2 && abnormal_all_area > abnormal_all_area_onset) return 1;
@@ -639,7 +640,7 @@ public:
 		if (abnormal_wait_time_2 > 0) {
 			if ( (abnormal_start_time < 0) && ((conTimeStep/1000) > abnormal_wait_time_2) ) return 11;
 		}
-		
+			
 		return 0;
 	}
 

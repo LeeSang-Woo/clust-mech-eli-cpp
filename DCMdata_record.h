@@ -7,6 +7,7 @@
 #include "DCModel_struct_abn.h"
 
 
+
 template <typename Tcontainer2D>
 class DCMdata {
 
@@ -81,7 +82,6 @@ public:
 };
 
 
-
 class DCMdata_Record_AbnormalPopulation : public DCMdata<DCMcontainerAB> {
 
 public:
@@ -148,7 +148,7 @@ public:
 				double peri_cell = con->DCMcells[i]->perimeterLength;
 				double side_cell = static_cast<double>(con->DCMcells[i]->verticesSize_r);
 				double coef_cell = peri_cell/side_cell/sqrt(area_cell);
-		
+						
 				if (con->DCMcells[i]->abnormal_flag == 0) {
 
 					normal_cell++;
@@ -424,9 +424,11 @@ public:
 	DCMdata_Func() {}
 	virtual ~DCMdata_Func() {}
 	
-	virtual void setContainer(Tcontainer2D& con, int index) {}
+	virtual void setContainer(Tcontainer2D& con, int index) {
+	}
 
-	virtual void resetFile() {}
+	virtual void resetFile() {
+	}
 
 };
 

@@ -14,7 +14,7 @@
 int main() {
 
 	unsigned __int64 timeStep = 0;
-	
+
 	int ci = 0;
 	int ci_end = 5;
 	int pi = 0;
@@ -89,9 +89,10 @@ int main() {
 
 	if (seed > 0) SF.seeding_WellRNG512(seed);
 
+
 	DCMcontainerAB* container2D = new DCMcontainerAB();
-	DCMdata_FuncAB rec;	
-	
+	DCMdata_FuncAB rec;
+
 	container2D->initialize_loadfile();
 	DCMInit(*container2D);
 	container2D->initialize(ci);
@@ -114,15 +115,14 @@ int main() {
 
 	if (size_index.size() > 0) abnormal_cells_size_flag = size_index[ci_div];
 	else abnormal_cells_size_flag = ci_div * 25;
-
-	container2D->initialize_cellpopulation(abnormal_line_coef, abnormal_cells_size_flag);	
 	
+	container2D->initialize_cellpopulation(abnormal_line_coef, abnormal_cells_size_flag);	
 
 	while(1) {
 			
 		container2D->vDynamicsMain();
 
-		int DivCycle = static_cast<int>(1.0/PM.Delta_t);
+		int time = static_cast<int>(1.0/PM.Delta_t);
 																					
 		if (timeStep != 0) {
 
@@ -186,7 +186,7 @@ int main() {
 			DCMInit(*container2D);
 			container2D->initialize(ci);
 			rec.setContainer(*container2D, ci+1);
-			
+
 			// Population
 			ci_rem = ci;
 			ci_div = ci;

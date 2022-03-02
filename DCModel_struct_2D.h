@@ -2,7 +2,8 @@
 #define DCMODELSTRUCT2D_HH
 
 #include "DCModel_struct.h"
-
+#include <tbb\tbb.h>
+using namespace tbb;
 
 ////// Enum Flags /////////////////////////////////////////
 
@@ -46,6 +47,7 @@ namespace BC {
 		MPHASE_FSI			= 1<<3,	// Fixed size, immediately
 		MPHASE_FSD			= 1<<4,	// Fixed size, delayed
 		MPHASE_TTH			= 1<<5,	// Time threshold
+		MPHASE_ADD			= 1<<6, // Adder
 
 		BOUNDARY_ELI		= 1<<25,
 		NO_DIVISION			= 1<<26,
@@ -1644,6 +1646,8 @@ public:
 	int cell_size_update_flag;
 
 	int recordable_flag;
+
+	double adder_parameter;
 	
 	//////////////////////////////
 
@@ -1680,7 +1684,8 @@ public:
 		cell_size_counter = 0;
 		cell_size_update_flag = 0;
 		recordable_flag = 0;
-		
+		adder_parameter = -1;
+
 		rec_recon_info = NULL;
 		rec_recon_info_size = 0;
 
@@ -1773,6 +1778,7 @@ public:
 			param_list.push_back("Decay of Lambda");	// 10
 			param_list.push_back("Initial distribution of Lambda");		// 11
 			param_list.push_back("Outside boundary fix");	// 12
+			param_list.push_back("Adder parameter");		// 13
 		
 			while(std::getline(ifs, str)) {
 
@@ -1799,6 +1805,7 @@ public:
 					case 10: PM.Decay_of_Lambda = std::stod(token2); break;
 					case 11: if (std::stoi(token2) > 0) vertex_dynamics_flag ^= VD::RANDLAMBDA_INIT; break;
 					case 12: if (std::stoi(token2) > 0) vertex_dynamics_flag ^= VD::OUT_FIX; break;
+					case 13: if (std::stod(token2) > 0) adder_parameter = std::stod(token2); break;
 						}
 					}
 				}
@@ -1819,7 +1826,8 @@ public:
 
 		if (PM.Randomness_of_Lambda > 0) vertex_dynamics_flag ^= VD::RANDOMLAMBDA;
 		
-		GrowthDivisionFlag ^= BC::MPHASE_2SD;		
+		if (adder_parameter > 0) GrowthDivisionFlag ^= BC::MPHASE_ADD;
+		else GrowthDivisionFlag ^= BC::MPHASE_2SD;	
 
 		mphase_coef = 10.0;
 
@@ -2299,7 +2307,9 @@ public:
 					double t2_threshold;
 
 					if ((vertex_dynamics_flag & VD::T2TH_RELATIVE) == VD::T2TH_RELATIVE) t2_threshold = PM.Extrusion_Area*averageVolume;
-					else t2_threshold = PM.Extrusion_Area*initial_average_volume;
+					else {
+						t2_threshold = PM.Extrusion_Area * initial_average_volume;
+					}
 
 					if (DCMcells[i]->out_cell_eli_flag == 0) {
 						if (DCMcells[i]->cellArea[0] < t2_threshold && DCMcells[i]->fix_flag == 0) {
@@ -2338,7 +2348,8 @@ public:
 
 			for (int i=0; i<edgesSize; i++) {
 
-				double t1_threshold = PM.Epsilon_Distance * Tedge2D::ave_distance * edges[i]->t1_coefficient;
+				double t1_threshold;
+				t1_threshold = PM.Epsilon_Distance * Tedge2D::ave_distance * edges[i]->t1_coefficient;
 
 				if (edges[i]->distance < t1_threshold && edges[i]->fix_flag == 0) {
 
@@ -2426,6 +2437,27 @@ public:
 						}
 
 					}
+
+					else if ((GrowthDivisionFlag & BC::MPHASE_ADD) == BC::MPHASE_ADD) {
+
+						if (DCMcells[i]->divArea < 0) {
+							DCMcells[i]->divArea = DCMcells[i]->cellArea[0];
+							DCMcells[i]->divCycle = 0.0;
+						}
+
+						DCMcells[i]->divCycle += PM.Delta_t;
+						if (DCMcells[i]->targetArea < PM.Init_TargetArea * 3.0) {
+							DCMcells[i]->setTargetArea(PM.Init_TargetArea + DCMcells[i]->divCycle * mphase_coef);
+						}
+
+						if (DCMcells[i]->cellArea[0] > (DCMcells[i]->divArea + adder_parameter)) {
+							DCMcells[i]->divArea = -1.0;
+							baseDivision(i);
+							updateEdges();
+						}
+
+					}
+
 
 					else if ((GrowthDivisionFlag & BC::MPHASE_FSI) == BC::MPHASE_FSI) {
 
