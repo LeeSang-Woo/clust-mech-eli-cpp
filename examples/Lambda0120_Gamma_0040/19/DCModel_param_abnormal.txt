@@ -1,0 +1,13 @@
+Normal growth flag:0
+Abnormal relative growth:2.0
+Abnormal initial index:664
+Abnormal initial layer real:100
+Onset abnormal cluster size:0
+Wait time 1:5000
+Wait time 2:10000
+Mechanism1 line tension coef:0.0
+Mechanism2 invasion coef:0
+Mechanism2 invasion prob:-1
+Mechanism3 barrier flag:0
+Mechanism3 barrier line tension coef:1.0
+Simulation finish area:4

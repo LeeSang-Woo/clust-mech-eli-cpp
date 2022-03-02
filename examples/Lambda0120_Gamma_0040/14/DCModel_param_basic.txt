@@ -1,0 +1,8 @@
+Delta t:0.0001
+Initial cell size:1000
+Lambda:0.12
+Gamma:0.04
+Growth rate:0.1
+Outside boundary lambda:1.0
+T1 threshold:0.01
+T2 threshold:0.01
